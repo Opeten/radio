@@ -95,8 +95,9 @@ function draw() {
     ctx.fillStyle = "#000000";
   };
 
-  
-  
+  onmousedown = (event) => {buttonPressed = true};
+  onmouseup = (event) => {buttonPressed = false};
+
   ctx.fillText(actFreq,60,103);
   ctx.fillText(standbyFreq,510,103);
   ctx.rect(350,50,100,50);
@@ -126,7 +127,5 @@ function draw() {
   ctx.fill()
   ctx.closePath();
   ctx.stroke();
-  if (mouseDown() == true) {
-    buttonPressed = true
-  }
+  
 }
