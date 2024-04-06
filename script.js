@@ -11,6 +11,7 @@ var actFreq = 172.000
 var standbyFreq = 146.000
 var buttonPressed = false
 var scrollPos = 0;
+let scrollingTimer;
 
 window.onload = function () {
   initDomElements();
@@ -81,10 +82,19 @@ function animate() {
 }
 
 
-function handleScroll() {
-  buttonPressed = true;
+function formatFreq(freq) {
+  console.log("Frequency before formatting:", freq);
+  freq = parseFloat(freq);
+  let formattedFreq = freq.toFixed(3);
+  if (!formattedFreq.includes('.')) {
+    formattedFreq += '.000';
+  } else {
+    while (formattedFreq.length - formattedFreq.indexOf('.') < 4) {
+      formattedFreq += '0';
+    }
+  }
+  return formattedFreq;
 }
-window.addEventListener('scroll', handleScroll);
 
 function draw() {
   divInfo4.innerHTML = "FPS: " + fps + "<br>Time: " + Math.trunc((lastUpdateTime - initTime) / 1000) + " s";
@@ -102,10 +112,20 @@ function draw() {
 
   onmousedown = (event) => {buttonPressed = true};
   onmouseup = (event) => {buttonPressed = false};
-  
+  window.onwheel = function(event) {
+    clearTimeout(scrollingTimer);
+    scrollingTimer = setTimeout(function() {
+      standbyFreq = parseFloat(standbyFreq) + 0.001; 
+      standbyFreq = formatFreq(standbyFreq);
+      draw(); 
+    }, 10);
+  };
 
-  ctx.fillText(actFreq,60,103);
-  ctx.fillText(standbyFreq,510,103);
+  let standbyFreqString = formatFreq(standbyFreq);
+  let actFreqString = formatFreq(actFreq);
+
+  ctx.fillText(actFreqString, 60, 103);
+  ctx.fillText(standbyFreqString, 510, 103);
   ctx.rect(350,50,100,50);
   ctx.rect(500,40,250,70);
   ctx.closePath()
@@ -133,5 +153,4 @@ function draw() {
   ctx.fill()
   ctx.closePath();
   ctx.stroke();
-  //actFreq ++
 }
