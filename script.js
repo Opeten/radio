@@ -12,6 +12,8 @@ var standbyFreq = 146.000
 var buttonPressed = false
 var scrollPos = 0;
 let scrollingTimer;
+const knob = new Image(); // Create new img element
+knob.src = "./knob.png"; // Set source path
 
 window.onload = function () {
   initDomElements();
@@ -81,7 +83,6 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-
 function formatFreq(freq) {
   console.log("Frequency before formatting:", freq);
   freq = parseFloat(freq);
@@ -100,8 +101,8 @@ function draw() {
   divInfo4.innerHTML = "FPS: " + fps + "<br>Time: " + Math.trunc((lastUpdateTime - initTime) / 1000) + " s";
   ctx.clearRect(0, 0, w, h);
   ctx.beginPath();
-  ctx.arc(500,250,50,0,2*Math.PI);
-  ctx.rect(50,40,250,70);
+  //ctx.arc(500,250,50,0,2*Math.PI);
+  ctx.rect(50,40,275,70);
   ctx.font = "80px sevenSeg";
   if(buttonPressed == false) {
     ctx.fillStyle = "#00ff00";
@@ -120,9 +121,9 @@ function draw() {
   
       // Update the frequency based on scrolling direction
       if (deltaY > 0) {
-        newFreq = parseFloat(standbyFreq) - 0.001;
+        newFreq = parseFloat(standbyFreq) - 10.001;
       } else if (deltaY < 0) {
-        newFreq = parseFloat(standbyFreq) + 0.001;
+        newFreq = parseFloat(standbyFreq) + 10.001;
       }
       
       // Check if the new frequency is within the desired range
@@ -139,38 +140,46 @@ function draw() {
       draw(); 
     }, 10);
   };
-  
-  
+
+  // Calculate the rotation angle based on standbyFreq
+  let rotationAngle = (parseFloat(standbyFreq)) * (Math.PI / 180);
 
   let standbyFreqString = formatFreq(standbyFreq);
   let actFreqString = formatFreq(actFreq);
 
   ctx.fillText(actFreqString, 60, 103);
-  ctx.fillText(standbyFreqString, 510, 103);
-  ctx.rect(350,50,100,50);
-  ctx.rect(500,40,250,70);
+  ctx.fillText(standbyFreqString, 535, 103);
+  ctx.rect(375,50,100,50);
+  ctx.rect(525,40,275,70);
   ctx.closePath()
+
+  ctx.save(); // Save the current state
+  ctx.translate(500 + 125, 200); // Translate to the center of the knob image
+  ctx.rotate(rotationAngle); // Rotate based on the calculated angle
+  ctx.drawImage(knob, -50, -50, 100, 100); // Draw the rotated knob image
+  ctx.restore(); // Restore the saved state
+
   ctx.stroke();
   ctx.beginPath();
-  ctx.lineTo(350+10,50+25);
+  ctx.lineTo(350+10+25,50+25);
   //correct
-  ctx.lineTo(350+40,50+40);
+  ctx.lineTo(350+40+25,50+40);
   //correct
-  ctx.lineTo(350+40,50+30);
+  ctx.lineTo(350+40+25,50+30);
   //correct
-  ctx.lineTo(350+60,50+30);
+  ctx.lineTo(350+60+25,50+30);
   //correct
-  ctx.lineTo(350+60,50+40);
+  ctx.lineTo(350+60+25,50+40);
   //correct
-  ctx.lineTo(350+90,50+25);
+  ctx.lineTo(350+90+25,50+25);
   //correct
-  ctx.lineTo(350+60,50+10);
+  ctx.lineTo(350+60+25,50+10);
   //correct
-  ctx.lineTo(350+60,50+20);
+  ctx.lineTo(350+60+25,50+20);
   //correct
-  ctx.lineTo(350+40,50+20);
+  ctx.lineTo(350+40+25,50+20);
   //correct
-  ctx.lineTo(350+40,50+10);
+  ctx.lineTo(350+40+25,50+10);
   ctx.fill()
   ctx.closePath();
   ctx.stroke();
