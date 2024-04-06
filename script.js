@@ -8,7 +8,7 @@ var frames = 0;
 var fps;
 const sevenSeg = new FontFace("sevenSeg","url(./sevenSegment.ttf)");
 var actFreq = "172.000"
-var stabdbyFreq = "146.000"
+var standbyFreq = "146.000"
 
 window.onload = function () {
   initDomElements();
@@ -87,6 +87,8 @@ function draw() {
   ctx.font = "80px sevenSeg";
   ctx.fillStyle = "#00ff00";
   ctx.fillText(actFreq,60,100);
+  ctx.fillText(standbyFreq,510,100);
   ctx.rect(350,47,100,50);
+  ctx.rect(500,37,250,70);
   ctx.stroke();
 }
