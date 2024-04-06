@@ -115,11 +115,32 @@ function draw() {
   window.onwheel = function(event) {
     clearTimeout(scrollingTimer);
     scrollingTimer = setTimeout(function() {
-      standbyFreq = parseFloat(standbyFreq) + 0.001; 
+      let deltaY = event.deltaY;
+      let newFreq;
+  
+      // Update the frequency based on scrolling direction
+      if (deltaY > 0) {
+        newFreq = parseFloat(standbyFreq) - 0.001;
+      } else if (deltaY < 0) {
+        newFreq = parseFloat(standbyFreq) + 0.001;
+      }
+      
+      // Check if the new frequency is within the desired range
+      if (newFreq < 5) {
+        standbyFreq = 5; // Set to minimum value if below 5
+      } else if (newFreq > 999.999) {
+        standbyFreq = 999.999; // Set to maximum value if above 999.999
+      } else {
+        standbyFreq = newFreq; // Set to the new frequency if within range
+      }
+      
+      // Format the frequency and redraw
       standbyFreq = formatFreq(standbyFreq);
       draw(); 
     }, 10);
   };
+  
+  
 
   let standbyFreqString = formatFreq(standbyFreq);
   let actFreqString = formatFreq(actFreq);
