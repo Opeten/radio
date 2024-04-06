@@ -154,7 +154,7 @@ function draw() {
   ctx.closePath()
 
   ctx.save(); // Save the current state
-  ctx.translate(500 + 125, 200); // Translate to the center of the knob image
+  ctx.translate(500 + 125 + 25, 200); // Translate to the center of the knob image (adjusted by 25 pixels to the right)
   ctx.rotate(rotationAngle); // Rotate based on the calculated angle
   ctx.drawImage(knob, -50, -50, 100, 100); // Draw the rotated knob image
   ctx.restore(); // Restore the saved state
