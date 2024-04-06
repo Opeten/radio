@@ -7,9 +7,10 @@ var lastUpdateTime = initTime;
 var frames = 0;
 var fps;
 const sevenSeg = new FontFace("sevenSeg","url(./sevenSegment.ttf)");
-var actFreq = "172.000"
-var standbyFreq = "146.000"
+var actFreq = 172.000
+var standbyFreq = 146.000
 var buttonPressed = false
+var scrollPos = 0;
 
 window.onload = function () {
   initDomElements();
@@ -80,6 +81,10 @@ function animate() {
 }
 
 
+function handleScroll() {
+  buttonPressed = true;
+}
+window.addEventListener('scroll', handleScroll);
 
 function draw() {
   divInfo4.innerHTML = "FPS: " + fps + "<br>Time: " + Math.trunc((lastUpdateTime - initTime) / 1000) + " s";
@@ -97,6 +102,7 @@ function draw() {
 
   onmousedown = (event) => {buttonPressed = true};
   onmouseup = (event) => {buttonPressed = false};
+  
 
   ctx.fillText(actFreq,60,103);
   ctx.fillText(standbyFreq,510,103);
@@ -127,5 +133,5 @@ function draw() {
   ctx.fill()
   ctx.closePath();
   ctx.stroke();
-  
+  //actFreq ++
 }
