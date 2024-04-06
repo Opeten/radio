@@ -9,6 +9,7 @@ var fps;
 const sevenSeg = new FontFace("sevenSeg","url(./sevenSegment.ttf)");
 var actFreq = "172.000"
 var standbyFreq = "146.000"
+var buttonPressed = false
 
 window.onload = function () {
   initDomElements();
@@ -78,17 +79,54 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
+
+
 function draw() {
   divInfo4.innerHTML = "FPS: " + fps + "<br>Time: " + Math.trunc((lastUpdateTime - initTime) / 1000) + " s";
   ctx.clearRect(0, 0, w, h);
   ctx.beginPath();
   ctx.arc(500,250,50,0,2*Math.PI);
-  ctx.rect(50,37,250,70);
+  ctx.rect(50,40,250,70);
   ctx.font = "80px sevenSeg";
-  ctx.fillStyle = "#00ff00";
-  ctx.fillText(actFreq,60,100);
-  ctx.fillText(standbyFreq,510,100);
-  ctx.rect(350,47,100,50);
-  ctx.rect(500,37,250,70);
+  if(buttonPressed == false) {
+    ctx.fillStyle = "#00ff00";
+  }
+  else if(buttonPressed == true) {
+    ctx.fillStyle = "#000000";
+  };
+
+  
+  
+  ctx.fillText(actFreq,60,103);
+  ctx.fillText(standbyFreq,510,103);
+  ctx.rect(350,50,100,50);
+  ctx.rect(500,40,250,70);
+  ctx.closePath()
   ctx.stroke();
+  ctx.beginPath();
+  ctx.lineTo(350+10,50+25);
+  //correct
+  ctx.lineTo(350+40,50+40);
+  //correct
+  ctx.lineTo(350+40,50+30);
+  //correct
+  ctx.lineTo(350+60,50+30);
+  //correct
+  ctx.lineTo(350+60,50+40);
+  //correct
+  ctx.lineTo(350+90,50+25);
+  //correct
+  ctx.lineTo(350+60,50+10);
+  //correct
+  ctx.lineTo(350+60,50+20);
+  //correct
+  ctx.lineTo(350+40,50+20);
+  //correct
+  ctx.lineTo(350+40,50+10);
+  ctx.fill()
+  ctx.closePath();
+  ctx.stroke();
+  if (mouseDown() == true) {
+    buttonPressed = true
+  }
 }
