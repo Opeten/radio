@@ -1,0 +1,49 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(201, 202, 209);
+  overflow: hidden;
+}
+
+#canvas {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgb(49, 49, 49);
+  border: 2px solid black;
+  z-index: 1;
+  
+}
+
+.info {
+  position: absolute;
+  bottom: 1px;
+  border: 1px solid black;
+  width: 24%;
+  height: 40px;
+  background-color: rgb(33, 33, 33);
+  color:antiquewhite;
+  font-size: small;
+  font-family: monospace;
+}
+
+#info1 {
+  left: 1px;
+}
+
+#info2 {
+  left: 25%;
+}
+
+#info3 {
+  left: 50%;
+}
+
+#info4 {
+  left: 75%;
+}
+
+@font-face{
+  font-family: 'sevenSeg';
+  src: url('./sevenSegment.ttf');
+}
