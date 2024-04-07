@@ -12,8 +12,9 @@ var standbyFreq = 146.000
 var buttonPressed = false
 var scrollPos = 0;
 let scrollingTimer;
-const knob = new Image(); // Create new img element
-knob.src = "./knob.png"; // Set source path
+var knobRotate = 0
+const knob = new Image();
+knob.src = "./knob.png";
 
 window.onload = function () {
   initDomElements();
@@ -59,14 +60,33 @@ function keyUp(e) {
 function mouseDown(e) {
   mouse.x = e.clientX - canvas.offsetLeft;
   mouse.y = e.clientY - canvas.offsetTop;
+
+  if (isMouseOverButton(mouse.x, mouse.y)) {
+    let tempFreq = actFreq;
+    actFreq = standbyFreq;
+    standbyFreq = tempFreq;
+    buttonPressed = true;
+  } else {
+    buttonPressed = false;
+  }
+
   divInfo1.innerHTML = "Mouse: Down" + ((e.buttons == 0) ? "" : " - " + e.buttons) + "<br>X: " + e.clientX + "<br>Y: " + e.clientY;
 }
+
 
 function mouseUp(e) {
   mouse.x = e.clientX - canvas.offsetLeft;
   mouse.y = e.clientY - canvas.offsetTop;
+
+  if (isMouseOverButton(mouse.x, mouse.y)) {
+    buttonPressed = false;
+  } else {
+    buttonPressed = false;
+  }
+
   divInfo1.innerHTML = "Mouse: Up" + ((e.buttons == 0) ? "" : " - " + e.buttons) + "<br>Mouse X: " + mouse.x + "<br>Mouse Y: " + mouse.y;
 }
+
 
 function mouseMove(e) {
   mouse.x = e.clientX - canvas.offsetLeft;
@@ -74,6 +94,13 @@ function mouseMove(e) {
   divInfo1.innerHTML = "Mouse" + ((e.buttons == 0) ? "" : " - " + e.buttons) + "<br>Mouse X: " + mouse.x + "<br>Mouse Y: " + mouse.y;
 }
 
+function isMouseOverButton(mouseX, mouseY) {
+  const buttonX = 375;
+  const buttonY = 50;
+  const buttonWidth = 100;
+  const buttonHeight = 50;
+  return mouseX >= buttonX && mouseX <= buttonX + buttonWidth && mouseY >= buttonY && mouseY <= buttonY + buttonHeight;
+}
 
 function animate() {
   frames++;
@@ -97,52 +124,64 @@ function formatFreq(freq) {
   return formattedFreq;
 }
 
+function isMouseOverKnob(mouseX, mouseY) {
+  const knobCenterX = 500 + 125 + 25;
+  const knobCenterY = 200;
+  const knobRadius = 50;
+  const distance = Math.sqrt((mouseX - knobCenterX) ** 2 + (mouseY - knobCenterY) ** 2);
+
+  return distance <= knobRadius;
+}
+
 function draw() {
   divInfo4.innerHTML = "FPS: " + fps + "<br>Time: " + Math.trunc((lastUpdateTime - initTime) / 1000) + " s";
   ctx.clearRect(0, 0, w, h);
   ctx.beginPath();
-  //ctx.arc(500,250,50,0,2*Math.PI);
   ctx.rect(50,40,275,70);
   ctx.font = "80px sevenSeg";
   if(buttonPressed == false) {
     ctx.fillStyle = "#00ff00";
   }
   else if(buttonPressed == true) {
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = "#E3AC52";
   };
 
-  onmousedown = (event) => {buttonPressed = true};
-  onmouseup = (event) => {buttonPressed = false};
+
   window.onwheel = function(event) {
     clearTimeout(scrollingTimer);
     scrollingTimer = setTimeout(function() {
       let deltaY = event.deltaY;
-      let newFreq;
   
-      // Update the frequency based on scrolling direction
-      if (deltaY > 0) {
-        newFreq = parseFloat(standbyFreq) - 10.001;
-      } else if (deltaY < 0) {
-        newFreq = parseFloat(standbyFreq) + 10.001;
+      if (isMouseOverKnob(mouse.x, mouse.y)) {
+        let newFreq = parseFloat(standbyFreq);
+        let knobRotateChange = 0;
+  
+        if (deltaY > 0) {
+          newFreq -= 1.000;
+          knobRotateChange -= 5;
+        } else if (deltaY < 0) {
+          newFreq += 1.000;
+          knobRotateChange += 5;
+        }
+  
+        if (newFreq < 5) {
+          standbyFreq = 5; 
+        } else if (newFreq > 999.999) {
+          standbyFreq = 999.999; 
+        } else {
+          standbyFreq = newFreq; 
+        }
+  
+        knobRotate += knobRotateChange;
+  
+        standbyFreq = formatFreq(standbyFreq);
+        draw();
       }
-      
-      // Check if the new frequency is within the desired range
-      if (newFreq < 5) {
-        standbyFreq = 5; // Set to minimum value if below 5
-      } else if (newFreq > 999.999) {
-        standbyFreq = 999.999; // Set to maximum value if above 999.999
-      } else {
-        standbyFreq = newFreq; // Set to the new frequency if within range
-      }
-      
-      // Format the frequency and redraw
-      standbyFreq = formatFreq(standbyFreq);
-      draw(); 
     }, 10);
   };
+  
 
-  // Calculate the rotation angle based on standbyFreq
-  let rotationAngle = (parseFloat(standbyFreq)) * (Math.PI / 180);
+  let rotationAngle = (parseFloat(knobRotate)) * (Math.PI / 180);
 
   let standbyFreqString = formatFreq(standbyFreq);
   let actFreqString = formatFreq(actFreq);
@@ -153,32 +192,23 @@ function draw() {
   ctx.rect(525,40,275,70);
   ctx.closePath()
 
-  ctx.save(); // Save the current state
-  ctx.translate(500 + 125 + 25, 200); // Translate to the center of the knob image (adjusted by 25 pixels to the right)
-  ctx.rotate(rotationAngle); // Rotate based on the calculated angle
-  ctx.drawImage(knob, -50, -50, 100, 100); // Draw the rotated knob image
-  ctx.restore(); // Restore the saved state
+  ctx.save(); 
+  ctx.translate(500 + 125 + 25, 200); 
+  ctx.rotate(rotationAngle);
+  ctx.drawImage(knob, -50, -50, 100, 100);
+  ctx.restore();
 
   ctx.stroke();
   ctx.beginPath();
   ctx.lineTo(350+10+25,50+25);
-  //correct
   ctx.lineTo(350+40+25,50+40);
-  //correct
   ctx.lineTo(350+40+25,50+30);
-  //correct
   ctx.lineTo(350+60+25,50+30);
-  //correct
   ctx.lineTo(350+60+25,50+40);
-  //correct
   ctx.lineTo(350+90+25,50+25);
-  //correct
   ctx.lineTo(350+60+25,50+10);
-  //correct
   ctx.lineTo(350+60+25,50+20);
-  //correct
   ctx.lineTo(350+40+25,50+20);
-  //correct
   ctx.lineTo(350+40+25,50+10);
   ctx.fill()
   ctx.closePath();
