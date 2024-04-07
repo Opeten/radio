@@ -7,12 +7,13 @@ var lastUpdateTime = initTime;
 var frames = 0;
 var fps;
 const sevenSeg = new FontFace("sevenSeg","url(./sevenSegment.ttf)");
-var actFreq = 172.000
-var standbyFreq = 146.000
+var actFreq = ( Math.random() * 1000 )
+var standbyFreq = ( Math.random() * 1000 )
 var buttonPressed = false
 var scrollPos = 0;
 let scrollingTimer;
-var knobRotate = 0
+var largeKnobRotate = Math.floor( Math.random() * 360 )
+var smallKnobRotate = Math.floor( Math.random() * 360 )
 const knob = new Image();
 knob.src = "./knob.png";
 
@@ -124,13 +125,22 @@ function formatFreq(freq) {
   return formattedFreq;
 }
 
-function isMouseOverKnob(mouseX, mouseY) {
-  const knobCenterX = 500 + 125 + 25;
+function isMouseOverLargeKnob(mouseX, mouseY) {
+  const knobCenterX = 500 + 125;
   const knobCenterY = 200;
   const knobRadius = 50;
   const distance = Math.sqrt((mouseX - knobCenterX) ** 2 + (mouseY - knobCenterY) ** 2);
 
   return distance <= knobRadius;
+}
+
+function isMouseOverSmallKnob(mouseX, mouseY) {
+  const smallknobCenterX = 500 + 125 + 120;
+  const smallknobCenterY = 200;
+  const smallknobRadius = 25;
+  const smalldistance = Math.sqrt((mouseX - smallknobCenterX) ** 2 + (mouseY - smallknobCenterY) ** 2);
+
+  return smalldistance <= smallknobRadius;
 }
 
 function draw() {
@@ -152,16 +162,17 @@ function draw() {
     scrollingTimer = setTimeout(function() {
       let deltaY = event.deltaY;
   
-      if (isMouseOverKnob(mouse.x, mouse.y)) {
+      if (isMouseOverLargeKnob(mouse.x, mouse.y)) {
         let newFreq = parseFloat(standbyFreq);
-        let knobRotateChange = 0;
+        let largeKnobRotateChange = 0;
+        //let smallKnobRotateChange = 0;
   
         if (deltaY > 0) {
           newFreq -= 1.000;
-          knobRotateChange -= 5;
+          largeKnobRotateChange -= 5;
         } else if (deltaY < 0) {
           newFreq += 1.000;
-          knobRotateChange += 5;
+          largeKnobRotateChange += 5;
         }
   
         if (newFreq < 5) {
@@ -172,16 +183,46 @@ function draw() {
           standbyFreq = newFreq; 
         }
   
-        knobRotate += knobRotateChange;
+        largeKnobRotate += largeKnobRotateChange;
+        //smallKnobRotate += smallKnobRotateChange;
   
         standbyFreq = formatFreq(standbyFreq);
         draw();
       }
+        
+        if (isMouseOverSmallKnob(mouse.x, mouse.y)) {
+        let newFreq = parseFloat(standbyFreq);
+        //let largeKnobRotateChange = 0;
+        let smallKnobRotateChange = 0;
+  
+        if (deltaY > 0) {
+          newFreq -= 0.005;
+          smallKnobRotateChange -= 5;
+        } else if (deltaY < 0) {
+          newFreq += 0.005;
+          smallKnobRotateChange += 5;
+        }
+  
+        if (newFreq < 5) {
+          standbyFreq = 5; 
+        } else if (newFreq > 999.999) {
+          standbyFreq = 999.999; 
+        } else {
+          standbyFreq = newFreq; 
+        }
+  
+        //largeKnobRotate += largeKnobRotateChange;
+        smallKnobRotate += smallKnobRotateChange;
+  
+        standbyFreq = formatFreq(standbyFreq);
+        draw();
+      };
     }, 10);
   };
   
 
-  let rotationAngle = (parseFloat(knobRotate)) * (Math.PI / 180);
+  let rotationAngleLarge = (parseFloat(largeKnobRotate)) * (Math.PI / 180);
+  let rotationAngleSmall = (parseFloat(smallKnobRotate)) * (Math.PI / 180);
 
   let standbyFreqString = formatFreq(standbyFreq);
   let actFreqString = formatFreq(actFreq);
@@ -193,10 +234,18 @@ function draw() {
   ctx.closePath()
 
   ctx.save(); 
-  ctx.translate(500 + 125 + 25, 200); 
-  ctx.rotate(rotationAngle);
+  ctx.translate(500 + 125 , 200); 
+  ctx.rotate(rotationAngleLarge);
   ctx.drawImage(knob, -50, -50, 100, 100);
   ctx.restore();
+
+  ctx.save(); 
+  ctx.translate(500 + 125 + 120, 200 );
+  ctx.rotate(rotationAngleSmall); // Rotate around the center of the knob
+  ctx.drawImage(knob, -25, -25, 50, 50); // Draw the knob with the adjusted center
+  ctx.restore();
+
+
 
   ctx.stroke();
   ctx.beginPath();
