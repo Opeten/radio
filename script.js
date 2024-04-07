@@ -7,8 +7,8 @@ var lastUpdateTime = initTime;
 var frames = 0;
 var fps;
 const sevenSeg = new FontFace("sevenSeg","url(./sevenSegment.ttf)");
-var actFreq = ( Math.random() * 1000 )
-var standbyFreq = ( Math.random() * 1000 )
+var actFreq = ((Math.ceil(( Math.random() * 1000000 )/5))*5)/1000
+var standbyFreq = ((Math.ceil(( Math.random() * 1000000 )/5))*5)/1000
 var buttonPressed = false
 var scrollPos = 0;
 let scrollingTimer;
@@ -231,6 +231,14 @@ function draw() {
   ctx.fillText(standbyFreqString, 535, 103);
   ctx.rect(375,50,100,50);
   ctx.rect(525,40,275,70);
+  ctx.font = "20px arial";
+  ctx.fillStyle = "#272727";
+  ctx.fillRect(100,5,164,30)
+  ctx.fillRect(570,5,184,30)
+  ctx.fillStyle = "#00ff00";
+  ctx.fillText("Active Frequency",105,25 )
+  ctx.fillText("Standby Frequency",575,25 )
+  
   ctx.closePath()
 
   ctx.save(); 
